@@ -1,0 +1,18 @@
+#include SkRayFall
+
+on chat:
+	set tab header to "&c&l================ &r&lAngularis Skyblock &c&l================\n&6&l\n&7&lNick: &7%player%\n&a&lMoney: %{%player%.money}%\n&7&lOnline: %{online}%/10\n" and footer to "\n&e&lIP: 82.208.17.15:27981" for player
+
+on join:
+	set tab header to "&c&l================ &r&lAngularis Gaming &c&l================\n&6&l\n&7&lNick: &7%player%\n&a&lMoney: %{%player%.money}%\n&7&lOnline: %{online}%/10\n" and footer to "\n&e&lIP: 82.208.17.15:27981" for player
+	set tablist name of player to "&e&l%{%player%.rankk}% &7%player's name%" #Rank není založen na permissích
+	
+every 3 seconds:
+	loop all players:
+		add 1 to {_c}
+	set {online} to {_c}
+	loop all players:
+		set {_tab} to tablist name of loop-value
+		set tab header to "&c&l================ &r&lAngularis Skyblock &c&l================\n&6&l\n&7&lNick: &7%loop-player%\n&a&lMoney: %{%loop-player%.money}%\n&7&lOnline: %{online}%/10\n" and footer to "\n&e&lIP: 82.208.17.15:27981" for loop-player
+
+#Možná někdy více
