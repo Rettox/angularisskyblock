@@ -93,6 +93,7 @@ function openShopGui(player: player):
 	format slot 0 of {_player} with iron ingot named "&aShop: &6Materialy" with lore "&eZde nakoupis materialy!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "materialy")]
 	format slot 1 of {_player} with egg named "&aShop: &6Spawn Vejce" with lore "&eZde nakoupis spawn vejce!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "vejce")]
 	format slot 2 of {_player} with cobblestone named "&aShop: &6Bloky" with lore "&eZde nakoupis bloky!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "bloky")]
+	format slot 3 of {_player} with bones named "&aShop: &6Itemy" with lore "&eZde nakoupis item!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "itemy")]
 	format slot 26 of {_player} with barrier named "&cZavrit" to close
 		
 function openJobsGui(player: player):
@@ -145,10 +146,17 @@ function modifyGui(player: player, text: text):
 		format slot 9 of {_player} with enchantment table named "&aBlok: &6Oltar Ocarovani" with lore "&aCena: 600$||&eKlikni pro koupi!" to run [buyShop({_player}, "enchantment table", "600")]
 		format slot 26 of {_player} with barrier named "&cZpet" to run [modifyGui({_player}, "shop")]
 		
+	if {_text} is "itemy":
+		format slot 0 of {_player} with bone named "&aItem: &6Kost" with lore "&aCena: 5$||&eKlikni pro koupi!" to run [buyShop({_player}, "bone", "5")]
+		format slot 1 of {_player} with water bucket named "&aItem: &6Voda" with lore "&aCena: 20$||&eKlikni pro koupi!" to run [buyShop({_player}, "water bucket", "20")]
+		format slot 2 of {_player} with lava bucket named "&aItem: &6Lava" with lore "&aCena: 20$||&eKlikni pro koupi!" to run [buyShop({_player}, "lava bucket", "20")]
+		format slot 26 of {_player} with barrier named "&cZpet" to run [modifyGui({_player}, "shop")]
+		
 	if {_text} is "shop":
 		format slot 0 of {_player} with iron ingot named "&aShop: &6Materialy" with lore "&eZde nakoupis materialy!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "materialy")]
 		format slot 1 of {_player} with egg named "&aShop: &6Spawn Vejce" with lore "&eZde nakoupis spawn vejce!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "vejce")]
 		format slot 2 of {_player} with cobblestone named "&aShop: &6Bloky" with lore "&eZde nakoupis bloky!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "bloky")]
+		format slot 3 of {_player} with bones named "&aShop: &6Itemy" with lore "&eZde nakoupis item!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "itemy")]
 		format slot 26 of {_player} with barrier named "&cZavrit" to close
 		
 function buyShop(player: player, text: text, text2: text):
