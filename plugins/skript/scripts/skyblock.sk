@@ -159,3 +159,24 @@ function buyShop(player: player, text: text, text2: text):
 		remove {_number} from {%{_player}%.money}
 	else:
 		send "&6&lAngularis&7&lSkyblock &cNa koupi tohoto predmetu nemas dostatek penez! &eTvoje penize: &a%{%{_player}%.money}%&2$ &e- Cena: &a%{_number}%&2$" to {_player}
+
+#ORE
+on break:
+	if tool of player is enchanted with silk touch:
+	else:
+		if event-block is cobblestone:
+			chance of 11%:
+				loop 5 times:
+					chance of 50%:
+						set {_drop} to coal
+					chance of 30%:
+						set {_drop} to iron ingot
+					chance of 20%:
+						set {_drop} to gold ingot
+					chance of 10%:
+						set {_drop} to diamond
+					chance of 25%:
+						set {_drop} to lapis lazuli
+					chance of 24%:
+						set {_drop} to redstone
+				drop {_drop} at event-block
