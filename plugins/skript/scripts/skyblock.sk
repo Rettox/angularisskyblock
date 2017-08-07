@@ -1,0 +1,161 @@
+
+#Workbench durability
+on place:
+	if event-block is workbench:
+		set {%event-block%.uses} to random number between 9 and 20
+	add 1 to {%player%.skypoints}
+
+on craft:
+	set {%player%.craftednow} to true
+	add 3 to {%player%.skypoints}
+		
+on rightclick:
+	if event-block is workbench:
+		loop 200 times:
+			wait 1 ticks
+			if {%player%.craftednow} is true:
+				set {%player%.craftednow} to false
+				remove 1 from {%event-block%.uses}
+				exit loop
+		if {%event-block%.uses} <= 0:
+			set event-block to air
+			delete {%event-block%.uses}
+			send "&6&lAngularis&7&lSkyblock &eTvuj workbench se rozbil!"
+      
+#tpa, main portal
+
+command /tpa <player>:
+	trigger:
+		if arg-1 is not set:
+			send "&e&lTeleportace &a> &eZadej jmeno hrace!"
+		else:
+			set {%arg 1%.requester} to player
+			send "&e&lTeleportace &a> &eHrac %player% ti odeslal zadost o teleport!" to arg-1
+			send "&e&lTeleportace &a> &eZadost potvrdis/odmitnes pomoci /tpm" to arg-1
+			send "&e&lTeleportace &a> &eZadost odeslana!"
+			wait 30 seconds
+			set {%arg 1%.requester} to "&cNikdo"
+
+command /tpm:
+	trigger:
+		if {%player%.requester} is "&cNikdo":
+			wait 2 ticks
+			open chest with 1 row named "&eTeleportace - Manazer" to player
+			format slot 0 of player with barrier block named "&cNemas zadne zadosti o teleport!" with lore "" to close
+			format slot 2 of player with barrier block named "&cNemas zadne zadosti o teleport!" with lore "" to close
+			format slot 1 of player with barrier block named "&cNemas zadne zadosti o teleport!" with lore "" to close
+			format slot 6 of player with barrier block named "&cNemas zadne zadosti o teleport!" with lore "" to close
+			format slot 1 of player with barrier block named "&cNemas zadne zadosti o teleport!" with lore "" to close
+			format slot 3 of player with barrier block named "&cNemas zadne zadosti o teleport!" with lore "" to close
+			format slot 4 of player with barrier block named "&cNemas zadne zadosti o teleport!" with lore "" to close
+			format slot 5 of player with barrier block named "&cNemas zadne zadosti o teleport!" with lore "" to close
+			format slot 7 of player with barrier block named "&cNemas zadne zadosti o teleport!" with lore "" to close
+			format slot 8 of player with barrier block named "&cNemas zadne zadosti o teleport!" with lore "" to close
+		else:
+			wait 2 ticks
+			open chest with 1 row named "&eTeleportace - Manazer" to player
+			format slot 2 of player with 35:5 named "&2Prijmout zadost hrace &6%{%player%.requester}%" with lore "&e > Klikni pro prijmuti!" to close then run [do [teleport {%player%.requester} to player]->[send "&e&lTeleportace &a> &eTva zadost byla prijmuta!" to {%player%.requester}]->[send "&e&lTeleportace &a> &ePrijmul jsi zadost!" to player]->[set {%player%.requester} to "&cNikdo"]]
+			format slot 6 of player with 35:14 named "&cZamitnout zadost hrace &6%{%player%.requester}%" with lore "&e > Klikni pro odmitnuti!" to close then run [do [send "&e&lTeleportace &a> &eTvoje zadost byla zamitnuta" to {%player%.requester}]->[send "&e&lTeleportace &a> &eOdmitnul jsi zadost!" to player]->[set {%player%.requester} to "&cNikdo"]]
+			format slot 0 of player with 160:7 named "" with lore "" to close
+			format slot 1 of player with 160:7 named "" with lore "" to close
+			format slot 3 of player with 160:7 named "" with lore "" to close
+			format slot 4 of player with 160:7 named "" with lore "" to close
+			format slot 5 of player with 160:7 named "" with lore "" to close
+			format slot 7 of player with 160:7 named "" with lore "" to close
+			format slot 8 of player with 160:7 named "" with lore "" to close
+			
+command /portal:
+	trigger:
+		player is op:
+			if {%player%.portal.make} is not set:
+				set {%player%.portal.make} to true
+				stop
+			else:
+				delete {%player%.portal.make}
+				stop
+
+on break:
+	if {%player%.portal.make} is true:	
+		set {%event-block%.portal} to true
+		cancel event
+			
+on portal enter:
+	if {%player%.hassky} is false:
+		if {%block at player%.portal} is not set:
+			make player execute command "/skyblock vytvorit"
+	else:
+		if {%block at player%.portal} is true:
+			make player execute command "/skyblock home"
+      
+# shop, jobs
+function openShopGui(player: player):
+	open chest with 3 rows named "&c&lShop" to {_player}
+	format slot 0 of {_player} with iron ingot named "&aShop: &6Materialy" with lore "&eZde nakoupis materialy!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "materialy")]
+	format slot 1 of {_player} with egg named "&aShop: &6Spawn Vejce" with lore "&eZde nakoupis spawn vejce!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "vejce")]
+	format slot 2 of {_player} with cobblestone named "&aShop: &6Bloky" with lore "&eZde nakoupis bloky!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "bloky")]
+	format slot 26 of {_player} with barrier named "&cZavrit" to close
+		
+function openJobsGui(player: player):
+	open chest with 3 rows named "&c&lPrace" to {_player}
+	format slot 0 of {_player} with iron sword named "&aZamestnani: &6Lovec" with lore "&eZabit:||&eZvire: 2$||&eMonstrum: 4$||&eHrace: 10$" to run [jobJoin({_player}, "lovec")]
+	format slot 1 of {_player} with wood axe named "&aZamestnani: &6Drevorubec" with lore "&ePokosit:||&eCely strom: 5$||&eJeden kus dreva: 0.1$" to run [jobJoin({_player}, "drevorubec")]
+	format slot 2 of {_player} with stone pickaxe named "&aZamestnani: &6Hornik" with lore "&eVytezit:||&eCobblestone: 0.4$||&eStone: 0.4$||&eCoal Ore: 2$||&eDiamond Ore: 20$||&eLapis Ore: 7$||&eRedstone Ore: 7$||&eQuartz ore: 5$" to run [jobJoin({_player}, "hornik")]
+	format slot 8 of {_player} with paper named "&aInfo: &6Zamestnani" with lore "&eU Hornika pouze bez silk touch!" to be unstealable
+	format slot 26 of {_player} with barrier named "&cZavrit" to close
+	
+function jobJoin(player: player, text: text):
+	set {%{_player}%.job} to "%{_text}%"
+	send "&6&lAngularis&7&lSkyblock &eZamestnal jsi se jako &7&l%{_text}%!" to {_player}
+
+function modifyGui(player: player, text: text):
+	set {_slot} to 0
+	set {_slot} to {_slot} parsed as number
+	loop 27 times:
+		format slot {_slot} of {_player} with air to be unstealable
+		add 1 to {_slot}
+	if {_text} is "materialy":
+		format slot 0 of {_player} with cobblestone named "&6Cobblestone" with lore "&aCena: &61$||&eKlikni pro koupi!" to run [buyShop({_player}, "cobblestone", "1")]
+		format slot 1 of {_player} with iron ingot named "&6Zelezo" with lore "&aCena: &630$||&eKlikni pro koupi!" to run [buyShop({_player}, "iron ingot", "30")]
+		format slot 2 of {_player} with gold ingot named "&6Zlato" with lore "&aCena: &640$||&eKlikni pro koupi!" to run [buyShop({_player}, "gold ingot", "40")]
+		format slot 3 of {_player} with diamond named "&6Diamant" with lore "&aCena: &6100$||&eKlikni pro koupi!" to run [buyShop({_player}, "diamond", "100")]
+		format slot 4 of {_player} with flint named "&6Pazourek" with lore "&aCena: &61$||&eKlikni pro koupi!" to run [buyShop({_player}, "flint", "1")]
+		format slot 5 of {_player} with 338 named "&6Bambus" with lore "&aCena: &6300$||&eKlikni pro koupi!" to run [buyShop({_player}, "sugar cane", "300")]
+		format slot 6 of {_player} with clay ball named "&6Jil" with lore "&aCena: &63$||&eKlikni pro koupi!" to run [buyShop({_player}, "clay ball", "3")]
+		format slot 7 of {_player} with lapis lazuli named "&6Lapis" with lore "&aCena: &67$||&eKlikni pro koupi!" to run [buyShop({_player}, "lapis lazuli", "7")]
+		format slot 8 of {_player} with paper named "&aInfo: &6Materialy" with lore "&eCena se pocita za &7&lKUS!" to be unstealable
+		format slot 26 of {_player} with barrier named "&cZpet" to run [modifyGui({_player}, "shop")]
+		
+	if {_text} is "vejce":
+		format slot 0 of {_player} with egg named "&6Slepici Vejce" with lore "&aCena: 70$||&aHodnota: 5$||&eKlikni pro koupi!" to run [buyShop({_player}, "egg", "70")]
+		format slot 1 of {_player} with 383:92 named "&aVejce: &6Krava" with lore "&aCena: 70$||&aHodnota: 5$||&eKlikni pro koupi!" to run [buyShop({_player}, "383:92", "70")]
+		format slot 2 of {_player} with 383:91 named "&aVejce: &6Ovce" with lore "&aCena: 70$||&aHodnota: 5$||&eKlikni pro koupi!" to run [buyShop({_player}, "383:91", "70")]
+		format slot 3 of {_player} with 383:90 named "&aVejce: &6Prase" with lore "&aCena: 70$||&aHodnota: 5$||&eKlikni pro koupi!" to run [buyShop({_player}, "383:90", "70")]
+		format slot 26 of {_player} with barrier named "&cZpet" to run [modifyGui({_player}, "shop")]
+		
+	if {_text} is "bloky":
+		format slot 0 of {_player} with dirt named "&aBlok: &6Hlína" with lore "&aCena: 8$||&eKlikni pro koupi!" to run [buyShop({_player}, "dirt", "8")]
+		format slot 1 of {_player} with 17 named "&aBlok: &6Dubové Drevo" with lore "&aCena: 5$||&eKlikni pro koupi!" to run [buyShop({_player}, "oak log", "5")]
+		format slot 2 of {_player} with 17:1 named "&aBlok: &6Smrkové Drevo" with lore "&aCena: 14$||&eKlikni pro koupi!" to run [buyShop({_player}, "redwood log", "14")]
+		format slot 3 of {_player} with 17:2 named "&aBlok: &6Brizové Drevo" with lore "&aCena: 14$||&eKlikni pro koupi!" to run [buyShop({_player}, "birch log", "14")]
+		format slot 4 of {_player} with 17:3 named "&aBlok: &6Mahagonové Drevo" with lore "&aCena: 14$||&eKlikni pro koupi!" to run [buyShop({_player}, "jungle log", "14")]
+		format slot 5 of {_player} with sand named "&aBlok: &6Písek" with lore "&aCena: 2$||&eKlikni pro koupi!" to run [buyShop({_player}, "sand", "2")]
+		format slot 6 of {_player} with iron block named "&aBlok: &6Zelezny Blok" with lore "&aCena: 250$||&eKlikni pro koupi!" to run [buyShop({_player}, "iron block", "250")]
+		format slot 7 of {_player} with gold block named "&aBlok: &6Zlaty Blok" with lore "&aCena: 320$||&eKlikni pro koupi!" to run [buyShop({_player}, "gold block", "320")]
+		format slot 8 of {_player} with diamond block named "&aBlok: &6Diamantovy Blok" with lore "&aCena: 800$||&eKlikni pro koupi!" to run [buyShop({_player}, "diamond block", "800")]
+		format slot 9 of {_player} with enchantment table named "&aBlok: &6Oltar Ocarovani" with lore "&aCena: 600$||&eKlikni pro koupi!" to run [buyShop({_player}, "enchantment table", "600")]
+		format slot 26 of {_player} with barrier named "&cZpet" to run [modifyGui({_player}, "shop")]
+		
+	if {_text} is "shop":
+		format slot 0 of {_player} with iron ingot named "&aShop: &6Materialy" with lore "&eZde nakoupis materialy!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "materialy")]
+		format slot 1 of {_player} with egg named "&aShop: &6Spawn Vejce" with lore "&eZde nakoupis spawn vejce!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "vejce")]
+		format slot 2 of {_player} with cobblestone named "&aShop: &6Bloky" with lore "&eZde nakoupis bloky!||&eKlikni pro otevreni nabidky!" to run [modifyGui({_player}, "bloky")]
+		format slot 26 of {_player} with barrier named "&cZavrit" to close
+		
+function buyShop(player: player, text: text, text2: text):
+	set {_number} to {_text2} parsed as number
+	if {%{_player}%.money} >= {_number}:
+		set {_drop} to {_text} parsed as item
+		give {_drop} to {_player}
+		remove {_number} from {%{_player}%.money}
+	else:
+		send "&6&lAngularis&7&lSkyblock &cNa koupi tohoto predmetu nemas dostatek penez! &eTvoje penize: &a%{%{_player}%.money}%&2$ &e- Cena: &a%{_number}%&2$" to {_player}
