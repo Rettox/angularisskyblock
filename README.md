@@ -1,5 +1,7 @@
 # Angularis Skyblock
 Open-Source server resources and software.
+To, že je většina softwaru open-source však neznamená, že si jej vezmete!
+Zde uvedený kód je uveden pro vývoj serveru AngularisSkyblock a je určen především pro náš server!
 
 ------------------------------------------
 Na vývoj serveru Angularis Skyblock jsem především sám. Nabízím však open-source řešení pro ostatní servery!
